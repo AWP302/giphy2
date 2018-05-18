@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>Styling</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
+  <style type="text/css">
+    button,
+    div,
+    form,
+    input {
+      margin: 10px;
+    }
+
+    #header-header {
+      text-align: center;
+      font-family: fantasy;
+      font-size: 50px;
+      color: red;
+    }
+
+    body {
+        background-color: orange;
+    }
+
+    .container {
+              margin: 0%;
+    }
+
+    .col-4 {
+          float: left;
+    }
+  </style>  
+</head>
+
+<body>
+
+<header id ="header-header">A Very Stable Genius</header>
+  <div class="container">
+    <div class="row">
+        <div class="col-8">
+            <!-- Topics will Get Dumped Dere -->
+            <div id="topics-view"></div>
+
+            <!-- Rendered Buttons will get Dumped Here  -->
+            <div id="buttons-view"></div>
+        </div>
+            <!-- // form for adding topic -->
+        <div class="col-4">
+            <form id="topic-form">
+              <label for="topic-input">Add another horrorshow if you dare...</label>
+              <input type="text" id="topic-input">
+              <br>
+
+              <!-- Button triggers new movie to be added -->
+              <input id="add-topic" type="submit" value="Go on then if you must.">
+            </form>
+        </div>
+    </div>
+  <div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script type="text/javascript">
+      // Initial array of topics
+      var topics = ["Donald Trump", "Melania Trump", "Steve Bannon", "Kellyanne Conway", "Eric Trump", "Rudy Giuliani", "Kim Jong Un", "Donald Trump Jr.", "President Xi", "Tiffany Trump","Barron Trump", "Corey Lewandowski",];
+
+      //-----------------------------------------------//
+     
+      function displayTopicInfo() {
+
+var topic = $(this).attr("data-name");
+var queryURL = "https://api.giphy.com/v1/gifs/search?q=" +
+        topic + "&api_key=HW2lGuLaiQuiMxj0tlKaWjEYafRoJwuy&limit=10";
+
+// Creating an AJAX call for the specific topic button being clicked
+$.ajax({
+  url: queryURL,
+  method: "GET"
+}).then(function(response) {
+    console.log(queryURL);
+    console.log(response);
+
+var results = response.data;
+
+for (var  i = 0; i < results.length; i++) {
+
+    var topicDiv = $("<div class='topic'>");
+
+    var p = $("<p>").text("Rating: " + results[i].rating);
+
+    var topicImage = $('<img src="'+results[i].images.fixed_height.url+'" >');
+
+    topicDiv.append(p);
+    topicDiv.append(topicImage);
+
+    $("#buttons-view").prepend(topicDiv);
+}
+  
+});
+
+}
+
+
+
+      //----------------------------------------------//
+
+      // Function for displaying topic data
+      function renderButtons() {
+
+        // Deleting the topics prior to adding new topics
+        // (this is necessary otherwise you will have repeat buttons)
+        $("#buttons-view").empty();
+
+        // Looping through the array of topics
+        for (var i = 0; i < topics.length; i++) {
+
+          // Then dynamicaly generating buttons for each topic in the array
+          // This code $("<button>") is all jQuery needs to create the beginning and end tag. (<button></button>)
+          var a = $('<button type="button" class="btn btn-primary btn-sm">');
+          // Adding a class of topic-btn to our button
+          a.addClass("topic-btn");
+        //   Adding a data-attribute
+          a.attr("data-name", topics[i]);
+          // Providing the initial button text
+          a.text(topics[i]);
+          // Adding the button to the buttons-view div
+          $("#buttons-view").append(a);
+        }
+      }
+
+      //adding a new button/
+
+      $("#add-topic").on("click", function(event) {
+        event.preventDefault();
+        // This line grabs the input from the textbox
+        var topic = $("#topic-input").val().trim();
+
+        // Adding movie from the textbox to our array
+        topics.push(topic);
+
+        // Calling renderButtons which handles the processing of our movie array
+        renderButtons();
+      });
+      
+      $(document).on("click", ".topic-btn", displayTopicInfo);
+    
+      renderButtons();
+    </script>
+  </div>
+</body>
+
+</html>
